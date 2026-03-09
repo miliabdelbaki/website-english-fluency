@@ -1,0 +1,330 @@
+{
+  "info": {
+    "name": "PFE English Fluency Backend",
+    "_postman_id": "f7b8b55c-8c9e-4c25-9c5e-6b4b3d3b9f62",
+    "description": "Collection to test the backend API (auth, curriculum, progress, group practice).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth / Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"sami\",\n  \"password\": \"Test123!\",\n  \"fullName\": \"Sami Ben Ali\",\n  \"grade\": 5\n}\n"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/auth/signup",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Auth / Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"sami\",\n  \"password\": \"Test123!\"\n}\n"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/auth/login",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.token) {",
+              "  pm.environment.set('TOKEN', json.token);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "GET /grades",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/grades",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "grades"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /units/:grade",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/units/5",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "units",
+            "5"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /lessons/:grade/:unitNumber",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/lessons/5/5",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "lessons",
+            "5",
+            "5"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /progress/attempt",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"lessonId\": \"<lessonId>\",\n  \"exerciseId\": \"<exerciseId>\",\n  \"score\": 90,\n  \"pronunciationScore\": 92,\n  \"fluencyScore\": 88,\n  \"feedback\": \"Bien prononcé !\",\n  \"audioUrl\": \"https://example.com/audio.mp3\"\n}\n"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/progress/attempt",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "progress",
+            "attempt"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /progress/unit/:grade/:unitNumber",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/progress/unit/5/5",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "progress",
+            "unit",
+            "5",
+            "5"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /groups (create)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Club Phénix\",\n  \"grade\": 5,\n  \"unitNumber\": 5\n}\n"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/groups",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "groups"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /groups/join",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"<GROUP_CODE>\"\n}\n"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/groups/join",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "groups",
+            "join"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GET /groups/:code",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/api/groups/<GROUP_CODE>",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "groups",
+            "<GROUP_CODE>"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST /groups/:code/attempt",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{TOKEN}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"lessonId\": \"<lessonId>\",\n  \"score\": 82,\n  \"pronunciationScore\": 80,\n  \"fluencyScore\": 84,\n  \"feedback\": \"Bon travail en groupe\"\n}\n"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/groups/<GROUP_CODE>/attempt",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "api",
+            "groups",
+            "<GROUP_CODE>",
+            "attempt"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
