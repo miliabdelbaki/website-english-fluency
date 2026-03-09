@@ -21,14 +21,14 @@ router.post('/pronunciation', auth, async (req, res) => {
     const configuration = new Configuration({ apiKey });
     const openai = new OpenAIApi(configuration);
 
-    const prompt = `Tu es un professeur d'anglais. Un élève a prononcé la phrase suivante (transcription) : "${transcript}". La phrase attendue est : "${expected}".
+    const prompt = `You are an English teacher. A student said the following (transcript): "${transcript}". The expected phrase is: "${expected}".
 
-Donne une évaluation simple sur 100 de la prononciation. Donne aussi un commentaire clair en français et une suggestion de phrase à répéter (en anglais). Réponds uniquement en JSON avec les champs : score (nombre 0-100), feedback (texte), suggestion (phrase).`;
+Provide a simple pronunciation score out of 100. Give a clear feedback comment in English and a suggestion phrase to repeat (also in English). Reply only in JSON with fields: score (number 0-100), feedback (text), suggestion (phrase).`;
 
     const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [
-        { role: 'system', content: 'Tu es un assistant pédagogique pour corriger la prononciation.' },
+        { role: 'system', content: 'You are an educational assistant for correcting pronunciation.' },
         { role: 'user', content: prompt },
       ],
       max_tokens: 250,
@@ -37,7 +37,7 @@ Donne une évaluation simple sur 100 de la prononciation. Donne aussi un comment
 
     const text = response.data.choices?.[0]?.message?.content || '';
 
-    // Tenter de parser le JSON renvoyé par l'IA. Si échec, renvoyer le texte brut.
+    // Try to parse the JSON returned by the AI. If it fails, return the raw text.
     try {
       const parsed = JSON.parse(text);
       return res.json({ ...parsed });
@@ -46,7 +46,7 @@ Donne une évaluation simple sur 100 de la prononciation. Donne aussi un comment
     }
   } catch (err) {
     console.error('OpenAI error', err?.response?.data || err.message || err);
-    return res.status(500).json({ error: 'Erreur lors de l’appel OpenAI.' });
+    return res.status(500).json({ error: 'Error calling OpenAI.' });
   }
 });
 

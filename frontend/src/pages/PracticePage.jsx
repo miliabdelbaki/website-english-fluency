@@ -63,7 +63,7 @@ export default function PracticePage() {
       utterance.lang = 'en-US';
       window.speechSynthesis.speak(utterance);
     } else {
-      setMediaPermissionError('Synthèse vocale non disponible dans votre navigateur.');
+      setMediaPermissionError('Speech synthesis is not available in your browser.');
     }
   };
 
@@ -72,7 +72,7 @@ export default function PracticePage() {
     setTranscript('');
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setMediaPermissionError('Votre navigateur ne supporte pas l’enregistrement audio.');
+      setMediaPermissionError('Your browser does not support audio recording.');
       return;
     }
 
@@ -121,7 +121,7 @@ export default function PracticePage() {
         recognition.start();
       }
     } catch (err) {
-      setMediaPermissionError('Impossible d’accéder au micro. Vérifiez les permissions.');
+      setMediaPermissionError('Unable to access the microphone. Please check permissions.');
     }
   };
 
@@ -192,38 +192,42 @@ export default function PracticePage() {
     return { score, good: ratio >= 0.6 };
   };
 
-  const computeAiFeedback = (expected, actual) => {
-    const exp = normalizeText(expected);
-    const act = normalizeText(actual);
-    if (!act) {
-      return 'Il semble que tu n’as rien dit ou que l’audio n’a pas été capté. Essaie de parler plus fort ou plus clairement.';
-    }
+const computeAiFeedback = (expected, actual) => {
+  const exp = normalizeText(expected);
+  const act = normalizeText(actual);
 
-    if (exp === act) {
-      return 'Super ! Ta prononciation est très proche de la phrase attendue.';
-    }
+  if (!act) {
+    return 'It seems like you did not say anything or the audio was not captured. Try speaking louder or more clearly.';
+  }
 
-    const wordsExp = exp.split(' ');
-    const wordsAct = act.split(' ');
-    const missing = wordsExp.filter((w) => !wordsAct.includes(w));
-    const extra = wordsAct.filter((w) => !wordsExp.includes(w));
+  if (exp === act) {
+    return 'Great! Your pronunciation is very close to the expected phrase.';
+  }
 
-    const suggestions = [];
-    if (missing.length) {
-      suggestions.push(`Tu as oublié ces mots : ${missing.join(', ')}.`);
-    }
-    if (extra.length) {
-      suggestions.push(`Tu as ajouté ces mots : ${extra.join(', ')}.`);
-    }
+  const wordsExp = exp.split(' ');
+  const wordsAct = act.split(' ');
+  const missing = wordsExp.filter((w) => !wordsAct.includes(w));
+  const extra = wordsAct.filter((w) => !wordsExp.includes(w));
 
-    if (!suggestions.length) {
-      suggestions.push('La structure est proche, mais certains mots diffèrent. Essaie de te concentrer sur la phrase attendue.');
-    }
+  const suggestions = [];
 
-    suggestions.push(`Phrase attendue : « ${expected} »`);
-    suggestions.push(`Tu as dit : « ${actual} »`);
-    return suggestions.join(' ');
-  };
+  if (missing.length) {
+    suggestions.push(`You missed these words: ${missing.join(', ')}.`);
+  }
+
+  if (extra.length) {
+    suggestions.push(`You added these extra words: ${extra.join(', ')}.`);
+  }
+
+  if (!suggestions.length) {
+    suggestions.push('The structure is close, but some words differ. Try focusing on the expected phrase.');
+  }
+
+  suggestions.push(`Expected phrase: "${expected}"`);
+  suggestions.push(`You said: "${actual}"`);
+
+  return suggestions.join(' ');
+};
 
   const onSubmitAttempt = async () => {
     if (!currentExercise || !lesson) return;
@@ -248,7 +252,7 @@ export default function PracticePage() {
       }
 
       const finalScore = aiResult?.score ?? computedScore;
-      const finalFeedback = aiResult?.feedback ?? (good ? 'Très bien ! Ta prononciation correspond bien.' : 'Continue, ce n’est pas tout à fait ça.');
+      const finalFeedback = aiResult?.feedback ?? (good ? 'Great! Your pronunciation matches well.' : 'Keep going, it is not quite right yet.');
       const finalSuggestion = aiResult?.suggestion || null;
 
       await api.post('/api/progress/attempt', {
@@ -265,23 +269,23 @@ export default function PracticePage() {
       setAiFeedback(finalSuggestion || aiResult?.feedback || computeAiFeedback(expected, transcript));
       setFeedback(finalFeedback);
     } catch (err) {
-      setFeedback('Erreur lors de l’envoi, réessaie plus tard.');
+        setFeedback('Error sending your recording. Please try again later.');
     }
   };
 
   // simplified: fallback when no lesson is found
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
   if (!lesson) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <div className="card p-8 text-center">
-          <p className="text-lg font-semibold text-brand-700">Leçon introuvable.</p>
-          <p className="text-sm text-gray-600 mt-2">Retourne à la sélection de leçon.</p>
+        <div className="text-lg font-semibold text-brand-700">Lesson not found.</div>
+          <p className="text-sm text-gray-600 mt-2">Return to lesson selection.</p>
           <button className="button-primary mt-6" type="button" onClick={() => navigate(-1)}>
-            Retour
+            Back
           </button>
         </div>
       </div>
@@ -290,8 +294,8 @@ export default function PracticePage() {
 
   return (
     <PageLayout
-      title={`Pratique : ${lesson.title}`}
-      subtitle="Écoute, enregistre et améliore ta prononciation."
+      title={`Practice: ${lesson.title}`}
+      subtitle="Listen, record, and improve your pronunciation."
       showBack
       onBack={() => navigate(-1)}
     >
@@ -299,8 +303,8 @@ export default function PracticePage() {
         <div className="card p-6 shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-semibold text-brand-800">Exercice</h2>
-              <p className="text-sm text-brand-600">Choisis ce que tu veux répéter.</p>
+              <h2 className="text-xl font-semibold text-brand-800">Exercise</h2>
+              <p className="text-sm text-brand-600">Choose what you want to repeat.</p>
             </div>
             <div className="text-4xl">🎧</div>
           </div>
@@ -315,8 +319,8 @@ export default function PracticePage() {
                 onClick={() => setSelected(exercise._id)}
               >
                 <div className="flex items-center justify-between">
-                  <p className="font-semibold">{exercise.type === 'word' ? 'Mot' : 'Phrase'}</p>
-                  {selected === exercise._id && <span className="text-brand-600">Sélectionné</span>}
+                  <p className="font-semibold">{exercise.type === 'word' ? 'Word' : 'Sentence'}</p>
+                  {selected === exercise._id && <span className="text-brand-600">Selected</span>}
                 </div>
                 <p className="text-sm text-brand-600 mt-2">{exercise.prompt}</p>
               </button>
@@ -325,24 +329,24 @@ export default function PracticePage() {
         </div>
 
         <div className="card p-6 shadow-xl">
-          <h2 className="text-xl font-semibold mb-3 text-brand-800">Ton entraînement</h2>
+          <h2 className="text-xl font-semibold mb-3 text-brand-800">Your practice</h2>
           <p className="text-sm text-brand-600 mb-4">
-            Appuie sur "Enregistrer" puis envoie ton résultat.
+            Press "Record" then submit your result.
           </p>
 
           <div className="grid gap-3">
             <button type="button" className="button-secondary" onClick={speakPronunciation}>
-              Écouter la prononciation
+              Listen to pronunciation
             </button>
             <button
               type="button"
               className={`button-secondary ${recording ? 'bg-red-500 text-white hover:bg-red-600' : ''}`}
               onClick={handleRecordClick}
             >
-              {recording ? 'Arrêter l’enregistrement' : 'Enregistrer ma voix'}
+              {recording ? 'Stop recording' : 'Record my voice'}
             </button>
             <button type="button" className="button-primary" onClick={onSubmitAttempt}>
-              Envoyer mon enregistrement
+              Submit recording
             </button>
           </div>
 
@@ -354,24 +358,24 @@ export default function PracticePage() {
 
           {transcript && (
             <div className="mt-4 rounded-xl border border-brand-100 bg-brand-50 p-4">
-              <div className="text-sm font-semibold text-brand-700">Transcription détectée</div>
+              <div className="text-sm font-semibold text-brand-700">Detected transcription</div>
               <div className="mt-1 text-sm text-brand-700">"{transcript}"</div>
             </div>
           )}
 
           {recordedUrl && (
             <div className="mt-4 rounded-xl border border-brand-100 bg-brand-50 p-4">
-              <div className="text-sm font-semibold text-brand-700">Lecture de ton enregistrement</div>
+              <div className="text-sm font-semibold text-brand-700">Play your recording</div>
               <audio className="mt-2 w-full" controls src={recordedUrl} />
             </div>
           )}
 
           {score && (
             <div className="mt-6 rounded-xl border border-brand-100 bg-brand-50 p-4">
-              <div className="text-sm font-semibold text-brand-700">Résultat</div>
-              <div className="mt-2 text-sm text-brand-700">Score global : {score.generatedScore} / 100</div>
-              <div className="text-sm text-brand-700">Prononciation : {score.pronunciationScore} / 100</div>
-              <div className="text-sm text-brand-700">Fluidité : {score.fluencyScore} / 100</div>
+              <div className="text-sm font-semibold text-brand-700">Result</div>
+              <div className="mt-2 text-sm text-brand-700">Overall score: {score.generatedScore} / 100</div>
+              <div className="text-sm text-brand-700">Pronunciation: {score.pronunciationScore} / 100</div>
+              <div className="text-sm text-brand-700">Fluency: {score.fluencyScore} / 100</div>
             </div>
           )}
 
@@ -379,13 +383,13 @@ export default function PracticePage() {
 
           {aiFeedback && (
             <div className="mt-4 rounded-xl border border-brand-100 bg-brand-50 p-4">
-              <div className="text-sm font-semibold text-brand-700">Correction (IA)</div>
+              <div className="text-sm font-semibold text-brand-700">AI feedback</div>
               <div className="mt-2 text-sm text-brand-700">{aiFeedback}</div>
             </div>
           )}
 
           <div className="mt-6 text-xs text-brand-600">
-            Note : Cette démo utilise une assistance locale (transcription + comparaison) pour donner un retour sur ta prononciation.
+            Note: This demo uses local assistance (transcription + comparison) to provide feedback on your pronunciation.
           </div>
         </div>
       </div>

@@ -194,13 +194,13 @@ const seed = async () => {
     missions.push({
       lesson: lesson._id,
       type: 'sentence',
-      prompt: `${lesson.title} – répète : "${lesson.title} is fun!"`,
+      prompt: `${lesson.title} - repeat: "${lesson.title} is fun!"`,
       expected: `${lesson.title} is fun!`,
     });
     missions.push({
       lesson: lesson._id,
       type: 'word',
-      prompt: `Dites le mot clé : "${lesson.title.split(' ')[0].toLowerCase()}"`,
+      prompt: `Say the keyword: "${lesson.title.split(' ')[0].toLowerCase()}"`,
       expected: lesson.title.split(' ')[0].toLowerCase(),
     });
   });

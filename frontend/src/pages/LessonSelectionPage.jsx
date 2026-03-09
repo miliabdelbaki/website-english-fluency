@@ -27,19 +27,19 @@ export default function LessonSelectionPage() {
 
   const computeStatus = (lesson) => {
     const status = lesson.progress?.status || 'locked';
-    if (status === 'completed') return { label: 'Terminé', color: 'bg-green-500', icon: '✅' };
-    if (status === 'in_progress') return { label: 'En cours', color: 'bg-yellow-400', icon: '⏳' };
-    return { label: 'Bloqué', color: 'bg-gray-300', icon: '🔒' };
+    if (status === 'completed') return { label: 'Completed', color: 'bg-green-500', icon: '✅' };
+    if (status === 'in_progress') return { label: 'In progress', color: 'bg-yellow-400', icon: '⏳' };
+    return { label: 'Locked', color: 'bg-gray-300', icon: '🔒' };
   };
 
   return (
     <PageLayout
-      title={`Leçons - Unité ${unitNumber}`}
-      subtitle="Choisis une leçon pour pratiquer."
+      title={`Lessons - Unit ${unitNumber}`}
+      subtitle="Choose a lesson to practice."
       actions={
         <div className="flex items-center gap-2">
           <button className="button-secondary" type="button" onClick={() => navigate(`/units/${grade}`)}>
-            Retour
+            Back
           </button>
           <button
             className="button-secondary"
@@ -49,23 +49,23 @@ export default function LessonSelectionPage() {
               navigate('/');
             }}
           >
-            Déconnexion
+            Log out
           </button>
         </div>
       }
     >
       <div className="mb-6 rounded-2xl border border-brand-100 bg-white/80 p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-brand-800">Progression</h2>
+        <h2 className="text-lg font-semibold text-brand-800">Progress</h2>
         <p className="text-sm text-brand-600 mt-2">
-          Complète toutes les leçons pour débloquer "Pratique en groupe".
+          Complete all lessons to unlock "Group practice".
         </p>
       </div>
 
-      {loading && <div className="text-gray-500">Chargement...</div>}
+      {loading && <div className="text-gray-500">Loading...</div>}
       <div className="grid gap-4">
         {lessons.map((lesson) => {
           const status = computeStatus(lesson);
-          const disabled = status.label === 'Bloqué';
+          const disabled = status.label === 'Locked';
           return (
             <Link
               key={lesson._id}
@@ -82,10 +82,10 @@ export default function LessonSelectionPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <div className="text-xl font-bold">Leçon {lesson.number}</div>
+                    <div className="text-xl font-bold">Lesson {lesson.number}</div>
                     <div className="text-xs px-2 py-1 rounded-full bg-brand-100 text-brand-800">{lesson.title}</div>
                   </div>
-                  <p className="text-sm text-brand-600 mt-2">Clique pour pratiquer la prononciation.</p>
+                  <p className="text-sm text-brand-600 mt-2">Click to practice pronunciation.</p>
                 </div>
                 <div className={`text-sm font-semibold text-white px-3 py-1 rounded-full ${status.color}`}>
                   {status.icon} {status.label}

@@ -16,7 +16,13 @@ const defaultUnit = {
 export default function TeacherPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [adminKey, setAdminKey] = useState('change-me');
+
+  // Allow either the Vite env var (frontend) or a Vite version of the backend key.
+  // This makes it easier to keep backend (ADMIN_KEY) and frontend passwords in sync.
+  const teacherPassword =
+    import.meta.env.VITE_TEACHER_PASSWORD || import.meta.env.VITE_ADMIN_KEY || 'change-me';
+
+  const [adminKey, setAdminKey] = useState(() => teacherPassword);
   const [unit, setUnit] = useState(defaultUnit);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -28,38 +34,33 @@ export default function TeacherPage() {
     setMessage('');
   }, [unit.grade, unit.unitNumber]);
 
-  // Allow either the Vite env var (frontend) or a Vite version of the backend key.
-  // This makes it easier to keep backend (ADMIN_KEY) and frontend passwords in sync.
-  const teacherPassword =
-    import.meta.env.VITE_TEACHER_PASSWORD || import.meta.env.VITE_ADMIN_KEY || 'change-me';
-
   const unlock = () => {
     if (adminKey === teacherPassword) {
       setIsUnlocked(true);
       setUnlockError('');
     } else {
-      setUnlockError('Mot de passe incorrect.');
+      setUnlockError('Incorrect password.');
     }
   };
 
   if (!isUnlocked) {
     return (
       <PageLayout
-        title="Espace enseignant"
-        subtitle="Saisis ton mot de passe enseignant pour accéder aux outils."
+        title="Teacher console"
+        subtitle="Enter your teacher password to access the tools."
         actions={
           <button type="button" className="button-secondary" onClick={() => navigate('/practice-mode')}>
-            Retour
+            Back
           </button>
         }
       >
         <div className="mx-auto w-full max-w-md">
           <div className="card p-8 shadow-xl">
-            <h2 className="text-xl font-semibold text-brand-800">Accès enseignant</h2>
-            <p className="text-sm text-brand-600 mt-2">Entre le mot de passe enseignant pour continuer.</p>
+            <h2 className="text-xl font-semibold text-brand-800">Teacher access</h2>
+            <p className="text-sm text-brand-600 mt-2">Enter the teacher password to continue.</p>
 
             <label className="block mt-6">
-              <span className="text-sm font-semibold text-brand-700">Mot de passe</span>
+              <span className="text-sm font-semibold text-brand-700">Password</span>
               <input
                 type="password"
                 className="mt-1 w-full rounded-xl border px-4 py-2"
@@ -75,13 +76,12 @@ export default function TeacherPage() {
               className="button-primary mt-6 w-full"
               onClick={unlock}
             >
-              Accéder
+              Unlock
             </button>
 
             <div className="mt-4 text-xs text-brand-600">
-              Le mot de passe enseignant peut être défini dans <code>.env</code> via{' '}
-              <code>VITE_TEACHER_PASSWORD</code> (ou <code>VITE_ADMIN_KEY</code> pour
-              correspondre à la clé backend).
+              The teacher password can be set in <code>.env</code> via{' '}
+              <code>VITE_TEACHER_PASSWORD</code> (or <code>VITE_ADMIN_KEY</code> to match the backend key).
             </div>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function TeacherPage() {
 
   const loadUnit = async () => {
     setLoading(true);
-    setMessage('Chargement...');
+    setMessage('Loading...');
     try {
       const response = await api.get('/api/admin/unit', {
         params: { grade: unit.grade, unitNumber: unit.unitNumber },
@@ -167,9 +167,9 @@ export default function TeacherPage() {
           })),
         })),
       }));
-      setMessage('Unité chargée.');
+      setMessage('Unit loaded.');
     } catch (err) {
-      setMessage('Impossible de charger l’unité. Vérifie les paramètres ou la clé admin.');
+      setMessage(err.response?.data?.error || 'Unable to load the unit. Check parameters or the admin key.');
     } finally {
       setLoading(false);
     }
@@ -177,7 +177,7 @@ export default function TeacherPage() {
 
   const saveUnit = async () => {
     setLoading(true);
-    setMessage('Enregistrement...');
+    setMessage('Saving...');
     try {
       await api.post(
         '/api/admin/unit',
@@ -192,16 +192,16 @@ export default function TeacherPage() {
           headers: { 'x-admin-key': adminKey },
         },
       );
-      setMessage('Unité enregistrée avec succès.');
+      setMessage('Unit saved successfully.');
     } catch (err) {
-      setMessage('Erreur lors de l’enregistrement. Vérifie les données et la clé admin.');
+      setMessage(err.response?.data?.error || 'Error saving. Check the data and admin key.');
     } finally {
       setLoading(false);
     }
   };
 
   const deleteUnit = async () => {
-    if (!window.confirm('Supprimer cette unité et toutes ses leçons ?')) return;
+    if (!window.confirm('Delete this unit and all its lessons?')) return;
     setLoading(true);
     setMessage('Suppression...');
     try {
@@ -210,9 +210,9 @@ export default function TeacherPage() {
         headers: { 'x-admin-key': adminKey },
       });
       setUnit(defaultUnit);
-      setMessage('Unité supprimée.');
+      setMessage('Unit deleted.');
     } catch (err) {
-      setMessage('Impossible de supprimer l’unité.');
+      setMessage(err.response?.data?.error || 'Unable to delete the unit.');
     } finally {
       setLoading(false);
     }
@@ -221,17 +221,17 @@ export default function TeacherPage() {
   return (
     <PageLayout
       title="Teacher Console"
-      subtitle="Gère les unités, les leçons et les exercices (CRUD)."
+      subtitle="Manage units, lessons, and exercises (CRUD)."
       actions={
         <button type="button" className="button-secondary" onClick={() => navigate('/practice-mode')}>
-          Retour
+          Back
         </button>
       }
     >
       <div className="grid gap-6">
         <div className="card p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-brand-800">Clé admin</h2>
-          <p className="text-sm text-brand-600 mt-1">Utilise la clé ci-dessous pour appeler l’API admin.</p>
+          <h2 className="text-xl font-semibold text-brand-800">Admin key</h2>
+          <p className="text-sm text-brand-600 mt-1">Use the key below to call the admin API.</p>
           <input
             className="mt-4 w-full rounded-xl border px-4 py-2"
             value={adminKey}
@@ -240,7 +240,7 @@ export default function TeacherPage() {
         </div>
 
         <div className="card p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-brand-800">Unité</h2>
+          <h2 className="text-xl font-semibold text-brand-800">Unit</h2>
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block">
               <span className="text-sm font-semibold text-brand-700">Grade</span>
@@ -255,7 +255,7 @@ export default function TeacherPage() {
               </select>
             </label>
             <label className="block">
-              <span className="text-sm font-semibold text-brand-700">Unité</span>
+              <span className="text-sm font-semibold text-brand-700">Unit</span>
               <input
                 type="number"
                 min={1}
@@ -267,7 +267,7 @@ export default function TeacherPage() {
           </div>
 
           <label className="block mt-4">
-            <span className="text-sm font-semibold text-brand-700">Titre</span>
+            <span className="text-sm font-semibold text-brand-700">Title</span>
             <input
               className="mt-1 w-full rounded-xl border px-3 py-2"
               value={unit.title}
@@ -286,13 +286,13 @@ export default function TeacherPage() {
 
           <div className="mt-6 flex flex-wrap gap-3">
             <button onClick={loadUnit} type="button" className="button-secondary" disabled={loading}>
-              Charger
+              Load
             </button>
             <button onClick={saveUnit} type="button" className="button-primary" disabled={loading}>
-              Enregistrer
+              Save
             </button>
             <button onClick={deleteUnit} type="button" className="button-danger" disabled={loading}>
-              Supprimer
+              Delete
             </button>
           </div>
 
@@ -300,26 +300,26 @@ export default function TeacherPage() {
         </div>
 
         <div className="card p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-brand-800">Leçons</h2>
-          <p className="text-sm text-brand-600 mt-1">Ajoute ou modifie les leçons et leurs exercices.</p>
+          <h2 className="text-xl font-semibold text-brand-800">Lessons</h2>
+          <p className="text-sm text-brand-600 mt-1">Add or edit lessons and their exercises.</p>
 
           {unit.lessons.map((lesson, li) => (
             <div key={li} className="mt-6 rounded-2xl border border-brand-100 bg-white/70 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-brand-700">Leçon {li + 1}</span>
+                  <span className="text-sm font-semibold text-brand-700">Lesson {li + 1}</span>
                   <button
                     type="button"
                     className="text-sm text-red-600 hover:underline"
                     onClick={() => removeLesson(li)}
                   >
-                    Supprimer
+                    Delete
                   </button>
                 </div>
               </div>
               <div className="grid gap-4 md:grid-cols-2 mt-4">
                 <label className="block">
-                  <span className="text-xs font-semibold text-brand-700">N°</span>
+                  <span className="text-xs font-semibold text-brand-700">No.</span>
                   <input
                     type="number"
                     min={1}
@@ -329,7 +329,7 @@ export default function TeacherPage() {
                   />
                 </label>
                 <label className="block">
-                  <span className="text-xs font-semibold text-brand-700">Titre</span>
+                  <span className="text-xs font-semibold text-brand-700">Title</span>
                   <input
                     className="mt-1 w-full rounded-xl border px-3 py-2"
                     value={lesson.title}
@@ -340,26 +340,26 @@ export default function TeacherPage() {
 
               <div className="mt-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-brand-700">Exercices</span>
+                  <span className="text-sm font-semibold text-brand-700">Exercises</span>
                   <button
                     type="button"
                     className="button-secondary text-xs"
                     onClick={() => addExercise(li)}
                   >
-                    Ajouter un exercice
+                    Add exercise
                   </button>
                 </div>
 
                 {lesson.exercises.map((exercise, ei) => (
                   <div key={ei} className="mt-3 rounded-xl border border-brand-200 bg-white p-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-brand-700">Exercice {ei + 1}</span>
+                      <span className="text-xs font-semibold text-brand-700">Exercise {ei + 1}</span>
                       <button
                         type="button"
                         className="text-xs text-red-600 hover:underline"
                         onClick={() => removeExercise(li, ei)}
                       >
-                        Supprimer
+                        Delete
                       </button>
                     </div>
                     <div className="grid gap-3 mt-3 md:grid-cols-3">
@@ -370,8 +370,8 @@ export default function TeacherPage() {
                           value={exercise.type}
                           onChange={(e) => setExerciseField(li, ei, 'type', e.target.value)}
                         >
-                          <option value="sentence">Phrase</option>
-                          <option value="word">Mot</option>
+                          <option value="sentence">Sentence</option>
+                          <option value="word">Word</option>
                         </select>
                       </label>
                       <label className="block md:col-span-2">
@@ -384,7 +384,7 @@ export default function TeacherPage() {
                       </label>
                     </div>
                     <label className="block mt-3">
-                      <span className="text-xs font-semibold text-brand-700">Réponse attendue</span>
+                      <span className="text-xs font-semibold text-brand-700">Expected answer</span>
                       <input
                         className="mt-1 w-full rounded-xl border px-3 py-2"
                         value={exercise.expected}
@@ -398,7 +398,7 @@ export default function TeacherPage() {
           ))}
 
           <button type="button" className="button-secondary mt-6" onClick={addLesson}>
-            Ajouter une leçon
+            Add lesson
           </button>
         </div>
       </div>

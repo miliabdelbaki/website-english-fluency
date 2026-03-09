@@ -21,17 +21,17 @@ async function scorePronunciation({ audioUrl, expectedText }) {
 
   const hints = [];
   if (pronunciationScore < 70) {
-    hints.push('Essaie de parler plus lentement et articule bien chaque mot.');
+    hints.push('Try speaking more slowly and articulate each word clearly.');
   }
   if (fluencyScore < 70) {
-    hints.push('Essaie de garder un rythme plus régulier.');
+    hints.push('Try to keep a more consistent rhythm.');
   }
 
   return {
     score: overallScore,
     pronunciationScore,
     fluencyScore,
-    feedback: hints.length ? hints.join(' ') : 'Bon travail ! Continue comme ça.',
+    feedback: hints.length ? hints.join(' ') : 'Good job! Keep it up.',
   };
 }
 

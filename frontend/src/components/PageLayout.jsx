@@ -8,7 +8,7 @@ export default function PageLayout({
   title,
   subtitle,
   children,
-  backLabel = 'Retour',
+  backLabel = 'Back',
   onBack,
   actions,
   showBack = false,

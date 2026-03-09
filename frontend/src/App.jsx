@@ -21,7 +21,7 @@ function ProtectedRoute({ children, requiredRole }) {
   if (loading && !user) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="text-center text-lg font-semibold">Chargement…</div>
+        <div className="text-center text-lg font-semibold">Loading…</div>
       </div>
     );
   }
@@ -30,16 +30,16 @@ function ProtectedRoute({ children, requiredRole }) {
     return (
       <div className="flex h-screen items-center justify-center px-4">
         <div className="max-w-md rounded-2xl border border-brand-100 bg-white/80 p-8 text-center shadow-sm">
-          <div className="text-3xl font-semibold text-brand-800 mb-3">Accès réservé</div>
+          <div className="text-3xl font-semibold text-brand-800 mb-3">Access restricted</div>
           <div className="text-sm text-brand-600 mb-6">
-            Cette page est réservée aux enseignants. Connecte-toi avec un compte enseignant pour y accéder.
+            This page is reserved for teachers. Please log in with a teacher account to access it.
           </div>
           <button
             type="button"
             className="button-primary"
             onClick={() => (window.location.href = '/practice-mode')}
           >
-            Retour à la pratique
+            Back to practice
           </button>
         </div>
       </div>

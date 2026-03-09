@@ -47,19 +47,18 @@ export default function LoginPage() {
       // Teachers should land in the teacher console directly.
       navigate(student.role === 'teacher' ? '/teacher' : '/practice-mode');
     } catch (err) {
-      setError(err.response?.data?.error || 'Une erreur est survenue');
-    } finally {
+      setError(err.response?.data?.error || 'An error occurred');
       setLoading(false);
     }
   };
 
   return (
     <PageLayout
-      title={mode === 'login' ? 'Bienvenue !' : 'Créer un compte'}
+      title={mode === 'login' ? 'Welcome!' : 'Create an account'}
       subtitle={
         mode === 'login'
-          ? "Connecte-toi pour commencer ta pratique d'anglais."
-          : 'Inscris-toi pour débloquer toutes les activités.'
+          ? 'Log in to start practicing English.'
+          : 'Sign up to unlock all activities.'
       }
     >
       <div className="mx-auto w-full max-w-md">
@@ -67,9 +66,9 @@ export default function LoginPage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <div className="text-xs font-semibold uppercase tracking-widest text-brand-600">
-                {mode === 'login' ? 'Connexion' : 'Inscription'}
+                {mode === 'login' ? 'Login' : 'Sign up'}
               </div>
-              <p className="mt-1 text-sm text-brand-700">Choisis un mode pour commencer.</p>
+              <p className="mt-1 text-sm text-brand-700">Choose a mode to begin.</p>
             </div>
             <div className="text-5xl">🧠</div>
           </div>
@@ -82,7 +81,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => setMode('login')}
             >
-              Se connecter
+              Log in
             </button>
             <button
               className={`flex-1 py-2 rounded-xl font-semibold ${
@@ -91,37 +90,37 @@ export default function LoginPage() {
               type="button"
               onClick={() => setMode('signup')}
             >
-              S'inscrire
+              Sign up
             </button>
           </div>
 
           <form onSubmit={onSubmit} className="space-y-4">
             {mode === 'signup' && (
               <div>
-                <label className="block text-sm font-medium text-brand-700">Nom complet</label>
+                <label className="block text-sm font-medium text-brand-700">Full name</label>
                 <input
                   className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-300"
                   value={form.fullName}
                   onChange={onChange('fullName')}
-                  placeholder="Ex : Youssef"
+                  placeholder="Ex: Alex"
                   required
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-brand-700">Identifiant</label>
+              <label className="block text-sm font-medium text-brand-700">Username</label>
               <input
                 className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-300"
                 value={form.username}
                 onChange={onChange('username')}
-                placeholder="Ex : sami123"
+                placeholder="Ex: alex123"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-brand-700">Mot de passe</label>
+              <label className="block text-sm font-medium text-brand-700">Password</label>
               <input
                 className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-300"
                 type="password"
@@ -135,26 +134,26 @@ export default function LoginPage() {
             {mode === 'signup' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-brand-700">Classe</label>
+                  <label className="block text-sm font-medium text-brand-700">Grade</label>
                   <select
                     className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-300"
                     value={form.grade}
                     onChange={onChange('grade')}
                   >
-                    <option value={4}>4ème</option>
-                    <option value={5}>5ème</option>
-                    <option value={6}>6ème</option>
+                    <option value={4}>4th</option>
+                    <option value={5}>5th</option>
+                    <option value={6}>6th</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-brand-700">Je suis</label>
+                  <label className="block text-sm font-medium text-brand-700">I am</label>
                   <select
                     className="mt-1 w-full rounded-xl border border-gray-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-300"
                     value={form.role || 'student'}
                     onChange={onChange('role')}
                   >
-                    <option value="student">Étudiant</option>
-                    <option value="teacher">Enseignant</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
                   </select>
                 </div>
               </>
@@ -163,7 +162,7 @@ export default function LoginPage() {
             {error && <div className="text-sm text-red-600">{error}</div>}
 
             <button disabled={loading} className="button-primary w-full">
-              {loading ? 'Patiente...' : mode === 'login' ? 'Se connecter' : 'Créer un compte'}
+              {loading ? 'Please wait...' : mode === 'login' ? 'Log in' : 'Create account'}
             </button>
           </form>
         </div>

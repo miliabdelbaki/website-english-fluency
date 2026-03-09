@@ -28,7 +28,7 @@ export default function GradeSelectionPage() {
   return (
     <PageLayout
       title="Grade Selection (Alone Mode)"
-      subtitle="Choisis ta classe pour débuter ton aventure."
+      subtitle="Choose your grade to start your adventure."
       actions={
         <button
           type="button"
@@ -38,12 +38,12 @@ export default function GradeSelectionPage() {
             navigate('/');
           }}
         >
-          Se déconnecter
+          Log out
         </button>
       }
     >
       <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 md:grid-cols-3">
-        {loading && <div className="text-gray-500">Chargement...</div>}
+        {loading && <div className="text-gray-500">Loading...</div>}
         {grades.map((grade) => {
           const icon = grade.number === 4 ? '📘' : grade.number === 5 ? '✏️' : '🌍';
           return (
@@ -56,7 +56,7 @@ export default function GradeSelectionPage() {
                 {icon}
               </div>
               <div className="text-xl font-bold text-brand-800">{grade.name}</div>
-              <div className="text-sm text-brand-600">Continue ton parcours de lecture et de parole.</div>
+              <div className="text-sm text-brand-600">Continue your reading and speaking journey.</div>
             </Link>
           );
         })}

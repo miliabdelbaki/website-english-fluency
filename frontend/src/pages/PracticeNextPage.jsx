@@ -7,7 +7,7 @@ export default function PracticeNextPage() {
   const { grade, unitNumber } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState('Chargement...');
+  const [message, setMessage] = useState('Loading...');
 
   useEffect(() => {
     const fetchNext = async () => {
@@ -17,14 +17,14 @@ export default function PracticeNextPage() {
         });
 
         if (response.data.done) {
-          setMessage('Bravo ! Tu as terminé toutes les leçons de cette unité.');
+          setMessage('Great job! You have completed all lessons in this unit.');
           return;
         }
 
         const { lesson } = response.data;
         navigate(`/practice/${lesson.id}/${grade}/${unitNumber}`, { replace: true });
       } catch (err) {
-        setMessage('Impossible de récupérer l’exercice suivant.');
+        setMessage('Unable to fetch the next exercise.');
       } finally {
         setLoading(false);
       }
@@ -34,19 +34,19 @@ export default function PracticeNextPage() {
   }, [grade, unitNumber, navigate]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Chargement...</div>;
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
   return (
     <PageLayout
-      title="Pratique suivante"
-      subtitle="Ton parcours reprend là où tu t’es arrêté."
+      title="Next practice"
+      subtitle="Your journey picks up where you left off."
       showBack
       onBack={() => navigate(-1)}
     >
       <div className="rounded-2xl border border-brand-100 bg-white/80 p-8 text-center shadow-sm">
         <h2 className="text-xl font-semibold text-brand-800">{message}</h2>
-        <p className="text-sm text-brand-600 mt-4">Retourne à l’unité pour choisir une leçon.</p>
+        <p className="text-sm text-brand-600 mt-4">Return to the unit to choose a lesson.</p>
       </div>
     </PageLayout>
   );

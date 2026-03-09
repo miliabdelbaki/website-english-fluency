@@ -6,7 +6,11 @@ const Exercise = require('../models/Exercise');
 
 const router = express.Router();
 
-const ADMIN_KEY = process.env.ADMIN_KEY || 'change-me';
+const ADMIN_KEY =
+  process.env.ADMIN_KEY ||
+  process.env.VITE_ADMIN_KEY ||
+  process.env.VITE_TEACHER_PASSWORD ||
+  'change-me';
 
 // Simple admin middleware - uses a header token so you can call from Postman.
 const requireAdminKey = (req, res, next) => {

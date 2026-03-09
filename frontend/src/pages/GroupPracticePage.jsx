@@ -17,7 +17,7 @@ export default function GroupPracticePage() {
 
   const createGroup = async () => {
     setLoading(true);
-    setMessage('Création du groupe...');
+    setMessage('Creating group...');
     try {
       const response = await api.post('/api/groups', {
         name: `Group ${user?.username || ''}`,
@@ -25,9 +25,9 @@ export default function GroupPracticePage() {
         unitNumber: 5,
       });
       setGroup(response.data.group);
-      setMessage('Groupe créé ! Partage le code avec tes amis.');
+      setMessage('Group created! Share the code with your friends.');
     } catch (err) {
-      setMessage('Impossible de créer le groupe.');
+      setMessage('Unable to create the group.');
     } finally {
       setLoading(false);
     }
@@ -35,13 +35,13 @@ export default function GroupPracticePage() {
 
   const joinGroup = async () => {
     setLoading(true);
-    setMessage('Rejoindre le groupe...');
+    setMessage('Joining group...');
     try {
       const response = await api.post('/api/groups/join', { code: joinCode });
       setGroup(response.data.group);
-      setMessage('Tu as rejoint le groupe !');
+      setMessage('You have joined the group!');
     } catch (err) {
-      setMessage('Impossible de rejoindre le groupe. Vérifie le code.');
+      setMessage('Unable to join the group. Check the code.');
     } finally {
       setLoading(false);
     }
@@ -49,13 +49,13 @@ export default function GroupPracticePage() {
 
   const loadGroup = async (code) => {
     setLoading(true);
-    setMessage('Chargement du groupe...');
+    setMessage('Loading group...');
     try {
       const response = await api.get(`/api/groups/${code}`);
       setGroup(response.data.group);
-      setMessage('Groupe chargé.');
+      setMessage('Group loaded.');
     } catch (err) {
-      setMessage('Impossible de charger le groupe.');
+      setMessage('Unable to load the group.');
     } finally {
       setLoading(false);
     }
@@ -72,8 +72,8 @@ export default function GroupPracticePage() {
 
   return (
     <PageLayout
-      title="Pratique en groupe"
-      subtitle="Crée ou rejoins un groupe pour t’entraîner avec des camarades."
+      title="Group practice"
+      subtitle="Create or join a group to practice with classmates."
       actions={
         <button
           type="button"
@@ -83,15 +83,15 @@ export default function GroupPracticePage() {
             navigate('/');
           }}
         >
-          Se déconnecter
+          Log out
         </button>
       }
     >
       <div className="grid gap-6 md:grid-cols-2">
         <div className="card p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-brand-700">Créer un groupe</h2>
+          <h2 className="text-xl font-semibold text-brand-700">Create a group</h2>
           <p className="text-sm text-brand-600 mt-2">
-            Crée un groupe et partage le code avec tes amis.
+            Create a group and share the code with your friends.
           </p>
           <button
             type="button"
@@ -99,26 +99,26 @@ export default function GroupPracticePage() {
             onClick={createGroup}
             disabled={loading}
           >
-            Créer un groupe
+            Create group
           </button>
 
           {group?.code && (
             <div className="mt-4 rounded-xl border border-brand-100 bg-brand-50 p-4">
-              <div className="text-sm font-semibold text-brand-700">Code du groupe</div>
-              <div className="mt-2 text-lg font-bold">{group.code}</div>
-              <div className="mt-2 text-sm text-brand-600">Partage ce code pour que tes amis puissent rejoindre.</div>
+            <div className="text-sm font-semibold text-brand-700">Group code</div>
+            <div className="mt-2 text-lg font-bold">{group.code}</div>
+            <div className="mt-2 text-sm text-brand-600">Share this code so your friends can join.</div>
             </div>
           )}
         </div>
 
         <div className="card p-6 shadow-xl">
-          <h2 className="text-xl font-semibold text-brand-700">Rejoindre un groupe</h2>
-          <p className="text-sm text-brand-600 mt-2">Entre le code du groupe pour le rejoindre.</p>
+          <h2 className="text-xl font-semibold text-brand-700">Join a group</h2>
+          <p className="text-sm text-brand-600 mt-2">Enter the group code to join.</p>
           <input
             className="mt-4 w-full rounded-xl border px-3 py-2"
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-            placeholder="Code de groupe"
+            placeholder="Group code"
           />
           <button
             type="button"
@@ -126,34 +126,34 @@ export default function GroupPracticePage() {
             onClick={joinGroup}
             disabled={loading}
           >
-            Rejoindre
+            Join
           </button>
         </div>
       </div>
 
       {group && (
         <div className="mt-6 rounded-2xl border border-brand-100 bg-white/80 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-brand-700">Membres du groupe</h2>
+          <h2 className="text-lg font-semibold text-brand-700">Group members</h2>
           <div className="mt-3 grid gap-2">
             {members.map((member) => (
               <div key={member._id} className="flex items-center justify-between rounded-xl border border-brand-100 px-4 py-3">
                 <div>
                   <div className="text-sm font-semibold text-brand-800">{member.fullName || member.username}</div>
-                  <div className="text-xs text-brand-600">Classe {member.grade}</div>
+                  <div className="text-xs text-brand-600">Grade {member.grade}</div>
                 </div>
-                <div className="text-xs text-brand-500">{member.role === 'teacher' ? 'Professeur' : 'Étudiant'}</div>
+                <div className="text-xs text-brand-500">{member.role === 'teacher' ? 'Teacher' : 'Student'}</div>
               </div>
             ))}
           </div>
 
           <div className="mt-6">
-            <p className="text-sm text-brand-600">Une fois le groupe formé, chaque étudiant pourra envoyer ses tentatives via le menu de pratique.</p>
+            <p className="text-sm text-brand-600">Once the group is formed, each student can submit their attempts via the practice menu.</p>
             <button
               type="button"
               className="button-secondary mt-4"
               onClick={() => navigate('/grades')}
             >
-              Revenir à la pratique solo
+              Back to solo practice
             </button>
           </div>
         </div>

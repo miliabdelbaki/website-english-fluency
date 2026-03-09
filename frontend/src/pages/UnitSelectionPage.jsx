@@ -31,11 +31,11 @@ export default function UnitSelectionPage() {
   return (
     <PageLayout
       title="Page 4: Unit Selection"
-      subtitle="Choisis une unité pour découvrir les leçons."
+      subtitle="Choose a unit to discover the lessons."
       actions={
         <div className="flex items-center gap-2">
           <button className="button-secondary" type="button" onClick={() => navigate('/grades')}>
-            Retour
+            Back
           </button>
           <button
             className="button-secondary"
@@ -45,26 +45,26 @@ export default function UnitSelectionPage() {
               navigate('/');
             }}
           >
-            Déconnexion
+            Log out
           </button>
         </div>
       }
     >
       <div className="mx-auto w-full max-w-5xl space-y-6 px-4">
         <div className="rounded-3xl bg-white/70 p-6 shadow-[0_15px_40px_-25px_rgba(0,0,0,0.35)] backdrop-blur">
-          <h2 className="text-lg font-semibold text-brand-800">Chaque unité contient plusieurs leçons.</h2>
-          <p className="text-sm text-brand-600">Termine-les toutes pour débloquer la pratique de groupe.</p>
+          <h2 className="text-lg font-semibold text-brand-800">Each unit contains several lessons.</h2>
+          <p className="text-sm text-brand-600">Finish them all to unlock group practice.</p>
           <button
             type="button"
             className="button-primary mt-4 w-full md:w-auto"
             onClick={() => navigate(`/practice/next/${grade}/1`)}
           >
-            Pratique la prochaine leçon
+            Practice next lesson
           </button>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {loading && <div className="text-gray-500">Chargement...</div>}
+          {loading && <div className="text-gray-500">Loading...</div>}
           {units.map((unit) => {
             const completed = unit.progress?.status === 'completed' || false;
             const icon = unitIcons[(unit.number - 1) % unitIcons.length];
@@ -76,7 +76,7 @@ export default function UnitSelectionPage() {
               >
                 {completed && (
                   <div className="absolute top-3 right-3 bg-green-500 text-white text-xs rounded-full px-3 py-1">
-                    ✅ Terminé
+                    ✅ Completed
                   </div>
                 )}
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-500/15 text-4xl text-brand-700 shadow-inner">
@@ -84,7 +84,7 @@ export default function UnitSelectionPage() {
                 </div>
                 <h2 className="text-xl font-semibold text-brand-700">UNIT {unit.number}</h2>
                 <p className="text-sm text-brand-600">{unit.title}</p>
-                <div className="mt-2 text-xs text-brand-500">Clique pour voir les leçons</div>
+                <div className="mt-2 text-xs text-brand-500">Click to view lessons</div>
               </Link>
             );
           })}
